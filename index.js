@@ -102,12 +102,8 @@ function animaster() {
         moveAndHide(element, duration) {
             const moveDuration = duration * 2 / 5;
             const fadeOutDuration = duration * 3 / 5;
-            const anim = animaster();
 
-            anim.move(element, moveDuration, {x: 100, y: 20});
-            setTimeout(() => {
-                anim.fadeOut(element, fadeOutDuration);
-            }, moveDuration);
+            this.addMove(moveDuration, {x: 100, y: 20}).addFadeOut(fadeOutDuration).play(element);
 
             return {
                 reset() {
@@ -118,12 +114,8 @@ function animaster() {
         },
         showAndHide(element, duration) {
             const stepDuration = duration / 3;
-            const anim = animaster();
-            anim.fadeIn(element, stepDuration);
 
-            setTimeout(() => {
-                anim.fadeOut(element, stepDuration);
-            }, 2 * stepDuration);
+            this.addFadeIn(stepDuration).addDelay(stepDuration).addFadeOut(stepDuration).play(element);
         },
         heartBeating(element) {
             let scaled = false;
@@ -173,8 +165,13 @@ function animaster() {
             });
             return this;
         },
-
-
+        addDelay(duration) {
+            this._steps.push({
+                animationType: "delay",
+                duration
+            })
+            return this;
+        },
         play(element) {
             let currentTime = 0;
             for (const step of this._steps) {
@@ -192,12 +189,12 @@ function animaster() {
                         case "fadeOut":
                             this.fadeOut(element, step.duration);
                             break;
-
+                        case "delay":
+                            break;
                     }
                 }, currentTime);
+                currentTime += step.duration;
             }
-
-            currentTime += step.duration;
         }
     }
 
