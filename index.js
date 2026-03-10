@@ -141,9 +141,11 @@ function animaster() {
         },
         addMove(duration, translation) {
             this._steps.push({
+                animationType: "move",
                 duration,
                 translation,
             });
+            return this;
         },
         play(element) {
             let currentTime = 0;
