@@ -24,7 +24,25 @@ function addListeners() {
             const block = document.getElementById('fadeOutBlock');
             animaster().fadeOut(block, 5000);
         });
-    }
+
+    document.getElementById('moveAndHidePlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('moveAndHideBlock');
+            animaster().moveAndHide(block, 5000);
+        });
+
+    document.getElementById('showAndHidePlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('showAndHideBlock');
+            animaster().showAndHide(block, 5000);
+        });
+
+    document.getElementById('heartBeatingPlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('heartBeatingBlock');
+            animaster().heartBeating(block);
+        });
+}
 
 function animaster() {
     return {
@@ -45,6 +63,35 @@ function animaster() {
             element.style.transitionDuration = `${duration}ms`;
             element.classList.remove('show');
             element.classList.add('hide');
+        },
+        moveAndHide(element, duration) {
+            const moveDuration = duration * 2 / 5;
+            const fadeOutDuration = duration * 3 / 5;
+            const anim = animaster();
+
+            anim.move(element, moveDuration, {x: 100, y: 20});
+            setTimeout(() => {
+                anim.fadeOut(element, fadeOutDuration);
+            }, moveDuration);
+        },
+        showAndHide(element, duration) {
+            const stepDuration = duration / 3;
+            const anim = animaster();
+            anim.fadeIn(element, stepDuration);
+
+            setTimeout(() => {
+                anim.fadeOut(element, stepDuration);
+                1
+            }, 2 * stepDuration);
+        },
+        heartBeating(element) {
+            let scaled = false;
+            const anim = animaster();
+
+            setInterval(() => {
+                anim.scale(element, 500, scaled ? 1 : 1.4);
+                scaled = !scaled;
+            }, 500)
         }
     }
 }
