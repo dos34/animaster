@@ -3,7 +3,7 @@ addListeners();
 function addListeners() {
 
     let stop_obj = null;
-    let start_obj = null;
+    let reset_obj = null;
 
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
@@ -79,6 +79,7 @@ function animaster() {
     }
 
     return {
+        _steps: [],
         fadeIn(element, duration) {
             element.style.transitionDuration = `${duration}ms`;
             element.classList.remove('hide');
@@ -108,7 +109,7 @@ function animaster() {
             }, moveDuration);
 
             return {
-                reset(){
+                reset() {
                     resetMoveAndScale(element)
                     resetFadeOut(element)
                 }
@@ -136,6 +137,21 @@ function animaster() {
                 stop() {
                     clearInterval(timerId);
                 }
+            }
+        },
+        addMove(duration, translation) {
+            this._steps.push({
+                duration,
+                translation,
+            });
+        },
+        play(element) {
+            let currentTime = 0;
+            for (const step of this._steps) {
+                setTimeout(() => {
+                    this.move(element, step.duration, step.translation)
+                }, currentTime);
+                currentTime += step.duration;
             }
         }
     }
