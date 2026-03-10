@@ -8,25 +8,26 @@ function addListeners() {
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
-            animaster().fadeIn(block, 5000);
+            animaster().addFadeIn(5000).play(block);
         });
 
     document.getElementById('movePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveBlock');
-            animaster().move(block, 1000, {x: 100, y: 10});
+            animaster().addMove(1000, {x: 100, y: 10}).play(block)
+            //move(block, 1000, {x: 100, y: 10});
         });
 
     document.getElementById('scalePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('scaleBlock');
-            animaster().scale(block, 1000, 1.25);
+            animaster().addScale(1000, 1.25).play(block);
         });
 
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeOutBlock');
-            animaster().fadeOut(block, 5000);
+            animaster().addFadeOut(5000).play(block);
         });
 
     document.getElementById('moveAndHidePlay')
@@ -147,16 +148,59 @@ function animaster() {
             });
             return this;
         },
+
+        addScale(duration, ratio) {
+            this._steps.push({
+                animationType: "scale",
+                duration,
+                ratio,
+            });
+            return this;
+        },
+
+        addFadeIn(duration) {
+            this._steps.push({
+                animationType: "fadeIn",
+                duration
+            });
+            return this;
+        },
+
+        addFadeOut(duration) {
+            this._steps.push({
+                animationType: "fadeOut",
+                duration
+            });
+            return this;
+        },
+
+
         play(element) {
             let currentTime = 0;
             for (const step of this._steps) {
                 setTimeout(() => {
-                    this.move(element, step.duration, step.translation)
+                    switch (step.animationType) {
+                        case "move":
+                            this.move(element, step.duration, step.translation);
+                            break;
+                        case "scale":
+                            this.scale(element, step.duration, step.ratio);
+                            break;
+                        case "fadeIn":
+                            this.fadeIn(element, step.duration);
+                            break;
+                        case "fadeOut":
+                            this.fadeOut(element, step.duration);
+                            break;
+
+                    }
                 }, currentTime);
-                currentTime += step.duration;
             }
+
+            currentTime += step.duration;
         }
     }
+
 }
 
 function getTransform(translation, ratio) {
